@@ -7,5 +7,6 @@ assignees: SemenMartynov
 
 ---
 
-Student, group:
-URL:
+Student, group: 
+URL: 
+Git approach:
