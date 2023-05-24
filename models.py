@@ -7,3 +7,8 @@ class Block(BaseModel):
     index: int
     prev_hash: str
     nonce: int = 1
+
+
+class Node(BaseModel):
+    blocks_array: list[Block]
+    block_index: int | None = None
