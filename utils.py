@@ -83,7 +83,7 @@ async def new_blocks_generator(node: Node):
         if new_block is not None and (node.block_index is None or new_block.index > node.block_index):
             block_handler(node, new_block)
 
-            rst = (grequests.post(f"http://{node_name}:{PORT}/", json=new_block) for node_name in NODE_LIST)
+            rst = (grequests.post(f"http://{node_name}:{PORT}/", json=new_block.dict()) for node_name in NODE_LIST)
             grequests.map(rst)
 
         await sleep(0.2)
