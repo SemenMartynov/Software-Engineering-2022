@@ -14,4 +14,4 @@ config = Config(env_location)
 NODE_LIST = config("APP_NODES", cast=str, default=[])
 NODE_LIST = NODE_LIST.split(',')
 
-PORT = config("APP_PORT", cast=int)
+PORT = config("APP_PORT", cast=int, default=5050)
