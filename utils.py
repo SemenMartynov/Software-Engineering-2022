@@ -89,7 +89,6 @@ async def new_blocks_generator(node: Node):
         await sleep(0.2)
 
 
-
 fast_api_application = FastAPI(title="Test")
 node = Node(blocks_array=[])
 
@@ -101,3 +100,6 @@ async def start_service():
 @fast_api_application.post('/')
 async def handler(block: Block):
     block_handler(node, block)
+
+
+fast_api_application.add_event_handler('startup', start_service)
