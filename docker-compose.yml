@@ -1,0 +1,26 @@
+x-app: &default-node
+  build:
+    context: .
+
+
+services:
+  node1:
+    <<: *default-node
+    stdin_open: true
+    tty: true
+    environment:
+      - APP_NODES=node2,node3
+
+  node2:
+    <<: *default-node
+    stdin_open: true
+    tty: true
+    environment:
+      - APP_NODES=node1,node3
+
+  node3:
+    <<: *default-node
+    stdin_open: true
+    tty: true
+    environment:
+      - APP_NODES=node1,node2
