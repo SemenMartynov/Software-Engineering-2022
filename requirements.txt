@@ -1,0 +1,5 @@
+uvicorn~=0.22.0
+fastapi~=0.95.2
+starlette~=0.27.0
+pydantic~=1.10.7
+grequests~=0.6.0
