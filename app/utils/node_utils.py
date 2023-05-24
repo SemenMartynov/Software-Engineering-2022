@@ -4,7 +4,7 @@ import grequests as grequests
 
 from app.models.block_model import Block
 from app.models.node_model import Node
-from app.utils.block_utils import create_genesis, create_block
+from app.utils.block_utils import create_genesis, create_block, mine_block
 from config import NODE_LIST, PORT
 
 
@@ -32,14 +32,15 @@ async def generate_new_block(node: Node):
             new_block = create_genesis()
             return new_block
     else:
-        new_block = create_block(node.block_index+1, node.blocks_array[-1].hash)
+        new_block = mine_block(create_block(node.block_index+1, node.blocks_array[-1].hash))
         return new_block
 
 
 async def new_blocks_generator(node: Node):
     while True:
         new_block = await generate_new_block(node)
-        if new_block.index > node.block_index:
+
+        if new_block is not None and (node.block_index is None or new_block.index > node.block_index):
             block_handler(node, new_block)
 
             rst = (grequests.post(f"http://{node_name}:{PORT}/", json=new_block) for node_name in NODE_LIST)
