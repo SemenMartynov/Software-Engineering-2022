@@ -23,7 +23,7 @@ def mine_block(block: Block):
     while current_hash.hexdigest()[-4:] != "0000":
         block.nonce += random.randint(1, 30)
         current_hash = get_block_hash(block)
-    block.hash = current_hash
+    block.hash = current_hash.hexdigest()
     return block
 
 
