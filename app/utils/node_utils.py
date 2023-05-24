@@ -5,21 +5,24 @@ import grequests as grequests
 from app.models.block_model import Block
 from app.models.node_model import Node
 from app.utils.block_utils import create_genesis, create_block
-from config import NODE_LIST
+from config import NODE_LIST, PORT
 
 
 def block_handler(node: Node, received_block: Block):
     if received_block.index == 0:
         node.blocks_array.append(received_block)
         node.block_index = 0
+        print(f"Block with hash {received_block.hash} saved")
         return True
 
     last_block_index = node.blocks_array[-1].index
     if received_block.index > last_block_index:
         node.blocks_array.append(received_block)
         node.block_index = received_block.index
+        print(f"Block with hash {received_block.hash} saved")
         return True
 
+    print(f"Block with hash {received_block.hash} not saved")
     return False
 
 
@@ -39,11 +42,7 @@ async def new_blocks_generator(node: Node):
         if new_block.index > node.block_index:
             block_handler(node, new_block)
 
-            rst = (grequests.post(f"http://{node_name}:5050/", json=new_block) for node_name in NODE_LIST)
+            rst = (grequests.post(f"http://{node_name}:{PORT}/", json=new_block) for node_name in NODE_LIST)
             grequests.map(rst)
 
         await sleep(0.2)
-
-
-def start_node():
-    pass
