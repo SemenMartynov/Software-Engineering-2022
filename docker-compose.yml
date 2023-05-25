@@ -10,6 +10,9 @@ services:
     tty: true
     environment:
       - APP_NODES=node2,node3
+    depends_on:
+      - node2
+      - node3
 
   node2:
     <<: *default-node
