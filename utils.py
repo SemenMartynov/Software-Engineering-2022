@@ -1,9 +1,10 @@
 import random
 import string
-from asyncio import sleep
+import threading
+import time
 from hashlib import sha256
 
-import grequests
+import requests
 from fastapi import FastAPI
 
 from config import PORT, NODE_LIST
@@ -66,7 +67,7 @@ def block_handler(node: Node, received_block: Block):
     return False
 
 
-async def generate_new_block(node: Node):
+def generate_new_block(node: Node):
     if len(node.blocks_array) == 0:
         if 'node1' not in NODE_LIST:
             new_block = create_genesis()
@@ -76,17 +77,16 @@ async def generate_new_block(node: Node):
         return new_block
 
 
-async def new_blocks_generator(node: Node):
-    while True:
-        new_block = await generate_new_block(node)
-
-        if new_block is not None and (node.block_index is None or new_block.index > node.block_index):
-            block_handler(node, new_block)
-
-            rst = (grequests.post(f"http://{node_name}:{PORT}/", json=new_block.dict()) for node_name in NODE_LIST)
-            grequests.map(rst)
-
-        await sleep(0.2)
+class BlockGenerator(threading.Thread):
+    def run(self, *args, **kwargs):
+        print("start block generator loop")
+        while True:
+            new_block = generate_new_block(node)
+            if new_block is not None and (node.block_index is None or new_block.index > node.block_index):
+                block_handler(node, new_block)
+                for node_name in NODE_LIST:
+                    r = requests.post(f"http://{node_name}:{PORT}/", json=new_block.dict())
+            time.sleep(0.2)
 
 
 fast_api_application = FastAPI(title="Test")
@@ -94,7 +94,8 @@ node = Node(blocks_array=[])
 
 
 async def start_service():
-    await new_blocks_generator(node)
+    t = BlockGenerator()
+    t.start()
 
 
 @fast_api_application.post('/')
