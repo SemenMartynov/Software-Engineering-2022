@@ -17,6 +17,6 @@ Blockchain на Python, разработанный в рамках курса Р
 
 Демонстрация работы проекта с использованием ```docker-compose```:
 
-![Example working](images/img.png)
+![Example working](images/image.png)
 
 Стоит отметить, что взаимодействие между нодами идёт через обращение по именам docker сервисов.
